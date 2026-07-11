@@ -15,6 +15,12 @@ bash <(curl -fsSL https://raw.githubusercontent.com/YongshengWin/nodepilot-dist/
 bash <(curl -fsSL https://raw.githubusercontent.com/YongshengWin/nodepilot-dist/main/install.sh) node
 ```
 
+The same commands are also the upgrade commands. Existing control installs keep
+their database, account, signing key, and certificates. Existing registered
+Agents keep their identity, policy, certificates, usage, and cached signed
+state. Set `NODEPILOT_VERSION=v1.0.1` to pin a release; otherwise the installer
+uses the latest published release.
+
 Before control installation, DNS-only A/AAAA records for the Agent API and
 subscription hostname must point to the control VPS. Public TCP port 80 must be
 available for HTTP-01 certificate issuance.
@@ -24,7 +30,7 @@ After control installation:
 ```sh
 # Create the node DNS-only record manually first.
 sudo nodepilot add NAME node.example.com
-sudo nodepilot subscribe DEVICE
+sudo nodepilot subscribe DEVICE -output /root/nodepilot-subscription.json
 sudo nodepilot remove NAME
 ```
 
@@ -33,6 +39,10 @@ private Agent TLS CA, and a public HTTPS subscription certificate. Node setup
 consumes a hidden, server-scoped, single-use pairing code and deletes it after
 registration. It installs sing-box, Snell, acme.sh, typed systemd services, and
 local nftables quota enforcement.
+
+Control installation does not create or print a subscription token. The
+explicit subscription command above creates a new mode-`0600` file and writes
+the one-time token only there.
 
 Online nodes join existing subscriptions only after acknowledging the exact
 signed revision they applied. Retired nodes leave subscriptions immediately;

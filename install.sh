@@ -3,7 +3,17 @@ set -eu
 
 ROLE=${1:-}
 REPOSITORY=${NODEPILOT_GITHUB_REPOSITORY:-YongshengWin/nodepilot-dist}
-BASE_URL=${NODEPILOT_RELEASE_BASE_URL:-"https://github.com/$REPOSITORY/releases/latest/download"}
+VERSION=${NODEPILOT_VERSION:-}
+case "$VERSION" in
+  *[!A-Za-z0-9._-]*) echo "NODEPILOT_VERSION is invalid" >&2; exit 1 ;;
+esac
+if [ -n "${NODEPILOT_RELEASE_BASE_URL:-}" ]; then
+  BASE_URL=$NODEPILOT_RELEASE_BASE_URL
+elif [ -n "$VERSION" ]; then
+  BASE_URL="https://github.com/$REPOSITORY/releases/download/$VERSION"
+else
+  BASE_URL="https://github.com/$REPOSITORY/releases/latest/download"
+fi
 
 case "$ROLE" in
   server|control) INTERNAL_ROLE=server ;;
@@ -30,8 +40,8 @@ done
 work=$(mktemp -d "${TMPDIR:-/tmp}/nodepilot-install.XXXXXX")
 trap 'rm -rf -- "$work"' 0 1 2 15
 asset="nodepilot-linux-$ARCH.tar.gz"
-curl -fL --proto '=https' --tlsv1.2 "$BASE_URL/$asset" -o "$work/$asset"
-curl -fL --proto '=https' --tlsv1.2 "$BASE_URL/SHA256SUMS" -o "$work/SHA256SUMS"
+curl -fL --retry 5 --retry-all-errors --connect-timeout 15 --proto '=https' --tlsv1.2 "$BASE_URL/$asset" -o "$work/$asset"
+curl -fL --retry 5 --retry-all-errors --connect-timeout 15 --proto '=https' --tlsv1.2 "$BASE_URL/SHA256SUMS" -o "$work/SHA256SUMS"
 expected=$(awk -v asset="$asset" '$2 == asset || $2 == "*" asset {print $1}' "$work/SHA256SUMS")
 if [ -z "$expected" ]; then
   echo "release checksum is missing for $asset" >&2
