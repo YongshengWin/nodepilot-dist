@@ -1,5 +1,7 @@
 Generic privacy-audited Linux release for amd64 and arm64.
 
+- Node table now resolves share-owned node status, so revoked share tombstones
+  render as `revoked/share` instead of looking enabled
 - Numbered menu pages now render readable summaries and tables instead of raw JSON
 - Overview, servers, nodes, Agents, usage, tasks, audit, and account views are
   formatted for terminal operation

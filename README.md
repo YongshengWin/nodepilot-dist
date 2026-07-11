@@ -18,7 +18,7 @@ bash <(curl -fsSL https://raw.githubusercontent.com/YongshengWin/nodepilot-dist/
 The same commands are also the upgrade commands. Existing control installs keep
 their database, account, signing key, and certificates. Existing registered
 Agents keep their identity, policy, certificates, usage, and cached signed
-state. Set `NODEPILOT_VERSION=v1.0.7` to pin a release; otherwise the installer
+state. Set `NODEPILOT_VERSION=v1.0.8` to pin a release; otherwise the installer
 uses the latest published release.
 
 Before control installation, DNS-only A/AAAA records for the Agent API and
