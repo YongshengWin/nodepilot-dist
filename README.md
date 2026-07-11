@@ -18,7 +18,7 @@ bash <(curl -fsSL https://raw.githubusercontent.com/YongshengWin/nodepilot-dist/
 The same commands are also the upgrade commands. Existing control installs keep
 their database, account, signing key, and certificates. Existing registered
 Agents keep their identity, policy, certificates, usage, and cached signed
-state. Set `NODEPILOT_VERSION=v1.0.5` to pin a release; otherwise the installer
+state. Set `NODEPILOT_VERSION=v1.0.6` to pin a release; otherwise the installer
 uses the latest published release.
 
 Before control installation, DNS-only A/AAAA records for the Agent API and
@@ -28,9 +28,14 @@ available for HTTP-01 certificate issuance.
 After control installation:
 
 ```sh
+sudo nodepilot
+
 # Create the node DNS-only record manually first.
 sudo nodepilot add NAME node.example.com
-sudo nodepilot subscribe DEVICE -output /root/nodepilot-subscription.json
+sudo nodepilot sub
+sudo nodepilot sub new DEVICE
+sudo nodepilot sub link 1
+sudo nodepilot sub rm 1
 sudo nodepilot remove NAME
 ```
 
@@ -40,9 +45,12 @@ consumes a hidden, server-scoped, single-use pairing code and deletes it after
 registration. It installs sing-box, Snell, acme.sh, typed systemd services, and
 local nftables quota enforcement.
 
-Control installation does not create or print a subscription token. The
-explicit subscription command above creates a new mode-`0600` file and writes
-the one-time token only there.
+Control installation does not create or print a subscription token. `sudo
+nodepilot` opens a numbered terminal management menu. `sub new` creates a
+mode-`0600` private URL file under `/root/.nodepilot/subscriptions/` and prints
+the links once. `sub` is the control-host subscription dashboard and uses
+x-ui-style numbers: `sub link 1`, `sub show 1`, and `sub rm 1` operate on the
+first row. Names and full IDs also work.
 
 Online nodes join existing subscriptions only after acknowledging the exact
 signed revision they applied. Retired nodes leave subscriptions immediately;
