@@ -1,5 +1,8 @@
 Generic privacy-audited Linux release for amd64 and arm64.
 
+- Numbered menu pages now render readable summaries and tables instead of raw JSON
+- Overview, servers, nodes, Agents, usage, tasks, audit, and account views are
+  formatted for terminal operation
 - `sudo nodepilot` now opens a numbered x-ui-style terminal management menu
 - Subscription management can be driven from the menu or with numbered shortcuts:
   `sudo nodepilot sub`, `sub new DEVICE`, `sub link 1`, `sub show 1`, `sub rm 1`
