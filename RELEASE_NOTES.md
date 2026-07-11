@@ -5,6 +5,7 @@ Generic privacy-audited Linux release for amd64 and arm64.
 - Agent upgrades preserve the service user's required data-directory traversal permissions
 - Runtime, proxy-config, and certificate directories are normalized to mode `0750` despite a restrictive process umask
 - The sing-box sandbox permits route-update subscriptions through `AF_NETLINK` without granting `CAP_NET_ADMIN`
+- The official Snell v5 binary receives its required executable-memory compatibility exception while retaining the remaining non-root systemd sandbox
 - Certificate permission recovery when the first service reload occurs before its unit exists
 - Secure mode-`0600` subscription-secret output; first install no longer creates or prints a token
 - CLI-only management over a protected Unix socket
