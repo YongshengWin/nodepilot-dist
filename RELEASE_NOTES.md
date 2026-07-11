@@ -4,6 +4,7 @@ Generic privacy-audited Linux release for amd64 and arm64.
 - In-place, rollback-capable upgrades using the same one-line commands
 - Agent upgrades preserve the service user's required data-directory traversal permissions
 - Runtime, proxy-config, and certificate directories are normalized to mode `0750` despite a restrictive process umask
+- The sing-box sandbox permits route-update subscriptions through `AF_NETLINK` without granting `CAP_NET_ADMIN`
 - Certificate permission recovery when the first service reload occurs before its unit exists
 - Secure mode-`0600` subscription-secret output; first install no longer creates or prints a token
 - CLI-only management over a protected Unix socket
