@@ -1,0 +1,30 @@
+name: Publish release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out release commit
+        uses: actions/checkout@v4
+
+      - name: Verify artifacts
+        working-directory: release-assets/${{ github.ref_name }}
+        run: sha256sum --check SHA256SUMS
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          gh release create "${{ github.ref_name }}"
+          release-assets/${{ github.ref_name }}/*
+          --verify-tag
+          --title "NodePilot ${{ github.ref_name }}"
+          --notes-file RELEASE_NOTES.md
