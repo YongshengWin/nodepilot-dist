@@ -15,16 +15,35 @@ jobs:
       - name: Check out release commit
         uses: actions/checkout@v4
 
+      - name: Check for committed release assets
+        id: assets
+        run: |
+          if [ -d "release-assets/${{ github.ref_name }}" ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "No committed release assets for ${{ github.ref_name }}; assuming assets were uploaded directly."
+            echo "present=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Verify artifacts
+        if: steps.assets.outputs.present == 'true'
         working-directory: release-assets/${{ github.ref_name }}
         run: sha256sum --check SHA256SUMS
 
-      - name: Create GitHub release
+      - name: Create or update GitHub release
+        if: steps.assets.outputs.present == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
-        run: >-
-          gh release create "${{ github.ref_name }}"
-          release-assets/${{ github.ref_name }}/*
-          --verify-tag
-          --title "NodePilot ${{ github.ref_name }}"
-          --notes-file RELEASE_NOTES.md
+        run: |
+          if gh release view "${{ github.ref_name }}" >/dev/null 2>&1; then
+            gh release upload "${{ github.ref_name }}" release-assets/${{ github.ref_name }}/* --clobber
+            gh release edit "${{ github.ref_name }}" \
+              --title "NodePilot ${{ github.ref_name }}" \
+              --notes-file RELEASE_NOTES.md
+          else
+            gh release create "${{ github.ref_name }}" \
+              release-assets/${{ github.ref_name }}/* \
+              --verify-tag \
+              --title "NodePilot ${{ github.ref_name }}" \
+              --notes-file RELEASE_NOTES.md
+          fi
